@@ -1,4 +1,3 @@
-
 // RenamerDlg.cpp : 实现文件
 //
 
@@ -11,44 +10,7 @@
 #define new DEBUG_NEW
 #endif
 
-
-// 用于应用程序“关于”菜单项的 CAboutDlg 对话框
-
-class CAboutDlg : public CDialogEx
-{
-public:
-	CAboutDlg();
-
-// 对话框数据
-#ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_ABOUTBOX };
-#endif
-
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
-
-// 实现
-protected:
-	DECLARE_MESSAGE_MAP()
-};
-
-CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
-{
-}
-
-void CAboutDlg::DoDataExchange(CDataExchange* pDX)
-{
-	CDialogEx::DoDataExchange(pDX);
-}
-
-BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
-	ON_WM_DROPFILES()
-END_MESSAGE_MAP()
-
-
 // CRenamerDlg 对话框
-
-
 
 CRenamerDlg::CRenamerDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_RENAMER_DIALOG, pParent)
@@ -80,47 +42,17 @@ BOOL CRenamerDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	// 将“关于...”菜单项添加到系统菜单中。
-
-	// IDM_ABOUTBOX 必须在系统命令范围内。
-	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
-	ASSERT(IDM_ABOUTBOX < 0xF000);
-
-	CMenu* pSysMenu = GetSystemMenu(FALSE);
-	if (pSysMenu != NULL)
-	{
-		BOOL bNameValid;
-		CString strAboutMenu;
-		bNameValid = strAboutMenu.LoadString(IDS_ABOUTBOX);
-		ASSERT(bNameValid);
-		if (!strAboutMenu.IsEmpty())
-		{
-			pSysMenu->AppendMenu(MF_SEPARATOR);
-			pSysMenu->AppendMenu(MF_STRING, IDM_ABOUTBOX, strAboutMenu);
-		}
-	}
-
 	// 设置此对话框的图标。  当应用程序主窗口不是对话框时，框架将自动
 	//  执行此操作
 	SetIcon(m_hIcon, TRUE);			// 设置大图标
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
-
-	// TODO: 在此添加额外的初始化代码
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 
 void CRenamerDlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
-	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
-	{
-		CAboutDlg dlgAbout;
-		dlgAbout.DoModal();
-	}
-	else
-	{
-		CDialogEx::OnSysCommand(nID, lParam);
-	}
+	CDialogEx::OnSysCommand(nID, lParam);
 }
 
 // 如果向对话框添加最小化按钮，则需要下面的代码
@@ -165,7 +97,6 @@ void CRenamerDlg::OnBnClickedExtension()
 	CWnd *pWnd = GetDlgItem(IDC_EDIT3);
 	pWnd->EnableWindow(IsDlgButtonChecked(Extension));
 }
-
 
 void CRenamerDlg::OnBnClickedFileOpen()
 {
@@ -226,14 +157,14 @@ void CRenamerDlg::OnBnClickedRename()
 		fileext = PathFindExtension(fileext);
 		//判断输入序号
 		if (num.GetLength() == 1)num.Format("%d", number);
-		else if (num.GetLength() == 2)num.Format("%02d", number++);
+		else if (num.GetLength() == 2)num.Format("%02d", number);
 		//如果选择了更改扩展名
 		if (IsDlgButtonChecked(Extension) == 1)finalname = path + name + " " + num + "." + ext;
 		else finalname = path + name + " " + num + fileext;
 		int renamecode = rename(path + file, finalname);
 		//如果选择了包含字幕
-		if (IsDlgButtonChecked(Sub) == 1)number = number - (i - 1) / 2;
-		if (renamecode == -1)continue;
+		if (IsDlgButtonChecked(Sub) == 1 && !(i&1))number++;
+		if (renamecode != 0) break;
 		//更新列表
 		LPSTR postname = finalname.GetBuffer();
 		finalname.ReleaseBuffer();
@@ -243,7 +174,6 @@ void CRenamerDlg::OnBnClickedRename()
 	}
 	clearFlag = true;
 }
-
 
 void CRenamerDlg::OnDropFiles(HDROP hDropInfo)
 {
