@@ -164,6 +164,7 @@ void CRenamerDlg::OnBnClickedRename()
 		int renamecode = rename(path + file, finalname);
 		//如果选择了包含字幕
 		if (IsDlgButtonChecked(Sub) == 1 && !(i&1))number++;
+		else number++;
 		if (renamecode != 0) break;
 		//更新列表
 		LPSTR postname = finalname.GetBuffer();
